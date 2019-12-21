@@ -1,0 +1,65 @@
+<div class="modal fade" bsModal #authModal="bs-modal" [config]="configAuthModal" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content" *ngIf="stateModal === 'login'">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i-feather name="lock" class="mr-2"></i-feather> Login
+        </h5>
+      </div>
+      <div class="modal-body">
+        <form novalidate [formGroup]="loginForm" (ngSubmit)="onLoginHandler()">
+          <div class="form-group">
+            <label for="Username">Username</label>
+            <input type="text" formControlName="username" class="form-control" id="Username"
+              aria-describedby="UsernameHelp">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" formControlName="password" class="form-control" id="password">
+          </div>
+          <div class="alert alert-danger" role="alert" *ngIf="alert">
+            {{alert}}
+          </div>
+          <button type="submit" [disabled]="!loginForm.valid" class="btn btn-primary">Login</button>
+          <span class="mx-3">or</span>
+          <button type="button" class="btn btn-primary" (click)="changeToRegisterForm()">Register</button>
+        </form>
+      </div>
+    </div>
+    <div class="modal-content" *ngIf="stateModal === 'register'">
+      <div class="modal-header">
+        <h5 class="modal-title">Register</h5>
+      </div>
+      <div class="modal-body">
+        <form novalidate [formGroup]="registerForm" (ngSubmit)="onRegisterHandler()">
+          <div class="form-group">
+            <label for="Username">Username</label>
+            <input type="text" formControlName="username" class="form-control" id="Username"
+              aria-describedby="UsernameHelp">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" formControlName="password" class="form-control" id="password">
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" formControlName="confirmPassword"
+              [class.no-same]="registerForm.hasError('notSame') && registerForm.controls['confirmPassword'].touched"
+              class="form-control" id="confirmPassword">
+            <div class="invalid-feedback d-block"
+              *ngIf="registerForm.hasError('notSame') && registerForm.controls['confirmPassword'].touched">
+              Password not same
+            </div>
+          </div>
+          <div class="alert alert-danger" role="alert" *ngIf="alert">
+            {{alert}}
+          </div>
+          <button type="submit" [disabled]="!registerForm.valid" class="btn btn-primary">Register</button>
+          <span class="mx-3">or</span>
+          <button type="button" class="btn btn-primary" (click)="changeToLoginForm()">Login</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

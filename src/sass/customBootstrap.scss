@@ -1,0 +1,7 @@
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+.ng-touched.ng-invalid,
+.ng-touched.no-same {
+  @extend .is-invalid;
+}

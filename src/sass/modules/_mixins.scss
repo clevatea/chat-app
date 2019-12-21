@@ -1,0 +1,85 @@
+@mixin bg-full($section) {
+  background:url("../images/#{$section}") center center no-repeat;
+  background-size: cover;
+}
+
+@mixin transition($all, $s, $e) {
+  -webkit-transition: #{$all} #{$s} #{$e};
+  -moz-transition: #{$all} #{$s} #{$e};
+  -ms-transition: #{$all} #{$s} #{$e};
+  -o-transition: #{$all} #{$s} #{$e};
+  transition: #{$all} #{$s} #{$e};
+}
+
+@mixin box-shadow($a, $b, $c, $d) {
+  -webkit-box-shadow: #{$a} #{$b} #{$c} #{$d};
+  -moz-box-shadow: #{$a} #{$b} #{$c} #{$d};
+  -ms-box-shadow: #{$a} #{$b} #{$c} #{$d};
+  -o-box-shadow: #{$a} #{$b} #{$c} #{$d};
+  box-shadow: #{$a} #{$b} #{$c} #{$d};
+}
+
+@mixin scale($all) {
+  -webkit-transform:scale(#{$all});
+  /* Safari and Chrome */
+  -moz-transform:scale(#{$all});
+  /* Firefox */
+  -ms-transform:scale(#{$all});
+  /* IE 9 */
+  -o-transform:scale(#{$all});
+  /* Opera */
+  transform:scale(#{$all});
+}
+
+@mixin keyframes($name) {
+  @-webkit-keyframes #{$name} {
+    @content
+  }
+
+  @-moz-keyframes #{$name} {
+    @content
+  }
+
+  @-ms-keyframes #{$name} {
+    @content
+  }
+
+  @-o-keyframes #{$name} {
+    @content
+  }
+
+  @keyframes #{$name} {
+    @content
+  }
+}
+
+@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white, 50%)) {
+
+  // For Google Chrome
+  ::-webkit-scrollbar {
+    width: $size;
+    height: $size;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: $foreground-color;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: $background-color;
+  }
+
+  // For Internet Explorer
+  body {
+    scrollbar-face-color: $foreground-color;
+    scrollbar-track-color: $background-color;
+  }
+}
+
+@mixin dashed-border($dashlength, $spacelength, $borderwidth, $color, $position: top) {
+  $per: percentage($dashlength / ($dashlength + $spacelength));
+  background-image: linear-gradient(to right, $color 0%, $color $per, rgba(0, 0, 0, 0) $per);
+  background-position: 0 $position;
+  background-size: ($dashlength + $spacelength) $borderwidth;
+  background-repeat: repeat-x;
+}

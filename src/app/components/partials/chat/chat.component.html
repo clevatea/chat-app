@@ -1,0 +1,13 @@
+<div class="chat-wrapper d-flex" [class.right-side]=""
+  [ngClass]="{'right-side flex-row-reverse' : currentUser === data.name}" *ngIf="!data.date">
+  <div class="chat">
+    {{data.chat}}
+  </div>
+  <div class="align-self-end d-flex font-6  text-black-50" [ngClass]="currentUser === data.name ? 'mr-2' : 'ml-2'"
+    title="{{data.time}}">{{data.time}}</div>
+</div>
+<div class="d-flex justify-content-center" *ngIf="data.date">
+  <div class="date text-secondary text-center">
+    {{data.date}}
+  </div>
+</div>

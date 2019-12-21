@@ -1,0 +1,36 @@
+@import "src/sass/module";
+
+.navbar-dark {
+  color: #fff;
+
+  .logout {
+    color: #fff;
+    @include transition('all', .2s, 'ease-out');
+
+    &:hover {
+      background: #434b53;
+      color: #bcbcbc;
+    }
+
+    .icon-small {
+      width: 20px;
+    }
+  }
+
+  .user {
+    &:before {
+      content: attr(data-letter);
+      display: inline-block;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      background: var(--pink);
+      color: white;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      line-height: 29px;
+      margin-right: 10px;
+    }
+  }
+}

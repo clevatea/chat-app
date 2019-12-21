@@ -1,0 +1,41 @@
+//BUTTON
+@mixin btn-blue($width:auto) {
+  @include bold;
+  width: #{$width};
+  max-width: 100%;
+  display: inline-block;
+  padding: 8px 25px;
+  color: $mainColor;
+  background-color: $blueColor;
+  outline: none;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  position: relative;
+  font-size: 14px;
+  border-radius: 5px;
+
+  @include transition("all", "0.2s", "ease-out");
+
+  &:hover,
+  &:focus,
+  &:active {
+    border: none;
+    color: $mainColor !important;
+    background-color: $blueColor !important;
+    opacity: .9;
+    box-shadow: none !important;
+  }
+
+  &:active {
+    opacity: .5;
+  }
+
+  &:disabled {
+    background: $disabledColor !important;
+    border: none !important;
+    color: #fff;
+    cursor: not-allowed;
+  }
+}

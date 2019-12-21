@@ -1,0 +1,33 @@
+<div class="d-flex" id="message">
+  <section class="sidebar-container">
+    <app-sidebar></app-sidebar>
+  </section>
+  <section class="rightside-container">
+    <ng-container *ngIf="!loadingActiveRoom && activeRoom">
+      <div class="chat-container" #chatContainer [scrollTop]="chatContainer.scrollHeight" appScrollable
+        (scrollPosition)="scrollHandler($event)">
+        <div class="d-flex flex-column">
+          <app-chat *ngFor="let data of dataChats" [class.date-wrapper]="data.date" [data]="data"
+            [currentUser]="authenticateService.currentUserValue.username"></app-chat>
+        </div>
+      </div>
+      <div class="form-chat position-relative" *ngIf="!loadingActiveRoom">
+        <form novalidate [formGroup]="formChat" (ngSubmit)="formChat.valid && sendMessage($event)">
+          <div class="form-group mb-0 pos-r">
+            <textarea class="font-5" name="message" formControlName="message" (keydown)="keyEnter($event)"
+              placeholder="Enter message here"></textarea>
+            <i-feather name="send" (click)="formChat.valid && sendMessage($event)" [class.active]="formChat.valid"
+              class="send-button"></i-feather>
+          </div>
+        </form>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="loadingActiveRoom">
+      <div class="d-flex justify-content-center h-100 align-items-center" *ngIf="loadingActiveRoom">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </ng-container>
+  </section>
+</div>

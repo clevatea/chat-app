@@ -1,0 +1,15 @@
+<nav class="navbar navbar-dark bg-dark p-0 align-items-stretch">
+  <ng-container *ngIf="currentUser">
+    <div class="user mr-auto d-flex px-3 pt-2 pb-3 align-items-center"
+      attr.data-letter="{{currentUser.username.charAt(0).toUpperCase()}}">
+      {{currentUser.username}}
+    </div>
+    <a class="logout px-3 pt-2 pb-3 align-items-center d-flex font-6" (click)="logoutHandler()" href="#">
+      <i-feather name="log-out" class="mr-1 icon-small"></i-feather> Logout
+    </a>
+
+  </ng-container>
+  <ng-container *ngIf="!currentUser">
+    <div style="height: 64px;">&nbsp;</div>
+  </ng-container>
+</nav>

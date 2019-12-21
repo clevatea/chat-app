@@ -1,0 +1,42 @@
+.chat-wrapper {
+  margin: 10px;
+  position: relative;
+
+  .chat {
+    border-radius: 5px;
+    padding: 15px 20px;
+    position: relative;
+    background: #fff;
+    max-width: 75%;
+    border: 1px solid #ddd;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap !important;
+    white-space: -webkit-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+    display: inline-flex;
+  }
+
+  abbr {
+    text-decoration: none;
+  }
+}
+
+.right-side {
+  .chat {
+    background: var(--blue);
+    color: #fff;
+  }
+}
+
+
+.date {
+  background: #fff;
+  border: 1px solid #ddd;
+  display: inline-block;
+  padding: 8px 0px;
+  width: 150px;
+}
