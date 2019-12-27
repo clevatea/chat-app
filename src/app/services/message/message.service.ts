@@ -86,11 +86,7 @@ export class MessageService {
           if (!lastMessageB) {
             return -1;
           } else {
-            return !lastMessageA.timestamp < lastMessageB.timestamp
-              ? -1
-              : !lastMessageA.timestamp > lastMessageB.timestamp
-              ? 1
-              : 0;
+            return lastMessageA.timestamp < lastMessageB.timestamp ? 1 : -1;
           }
         }
       });
@@ -197,6 +193,7 @@ export class MessageService {
       .pipe(take(1))
       .toPromise();
   }
+
   /**
    * @desc Listen to all users firebase
    */

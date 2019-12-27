@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 
@@ -17,7 +17,7 @@ import { SanitizePipe } from './../../pipes/chat.pipe';
   templateUrl: './message.component.html',
   styleUrls: ['./message.component.scss']
 })
-export class MessageComponent implements OnInit {
+export class MessageComponent implements OnInit, OnDestroy {
   formChat: FormGroup;
   activeRoom: string;
   loadingActiveRoom: boolean = false;
@@ -47,24 +47,22 @@ export class MessageComponent implements OnInit {
     // listen to actived route
     this.activatedRoute.params.subscribe((params: Params) => {
       if (params.room) {
+        // clear data
+        this.clearActiveRoom();
+
+        // set active room
         this.seTactiveRoom(params.room);
       }
     });
 
     // listen to user status from service
     this.authenticateService.currentUser.subscribe(userData => {
-      if (!userData) {
-        // clear data when logout
-        this.dataChats = [];
-
-        // unsubscribe active room
-        if (this.activeRoomSubscription) {
-          this.activeRoom = '';
-          this.activeRoomSubscription.unsubscribe();
-        }
-      } else {
+      if (userData) {
         // listen to current user
         this.listenMe();
+      } else {
+        // clear data when logout
+        this.clearActiveRoom();
       }
     });
   }
@@ -103,13 +101,18 @@ export class MessageComponent implements OnInit {
           this.db.list('chat/messages/' + this.activeRoom).update(key, { timestamp });
 
           // change notification to emit other user
-          data.timestamp = dataMessage.timestamp;
+          const notificationData = { ...data, timestamp: dataMessage.timestamp, roomName: this.activeRoom };
           const getUserName: string = this.activeRoom
             .split('-')
             .filter(e => e !== this.authenticateService.currentUserValue.username)[0];
-          this.db.list(`users/${getUserName}`).update('notification', data);
+          this.db.list(`users/${getUserName}`).update('notification', notificationData);
 
-          // update rooms
+          // change notification for current User
+          this.db
+            .list(`users/${this.authenticateService.currentUserValue.username}`)
+            .update('notification', notificationData);
+
+          // update rooms in firebase
           const lastMessage = data;
           const getUnread = await this.messageService.getRoomDetailFromDB(this.activeRoom);
           const unread = getUnread[1].payload.val()[getUserName];
@@ -167,6 +170,19 @@ export class MessageComponent implements OnInit {
       } else {
         this.getMessage(true);
       }
+    }
+  }
+
+  /**
+   * @desc will clear active room data
+   */
+  clearActiveRoom() {
+    // clear data
+    this.dataChats = [];
+    this.activeRoom = undefined;
+    // unsubscribe active room
+    if (this.activeRoomSubscription) {
+      this.activeRoomSubscription.unsubscribe();
     }
   }
 
@@ -236,6 +252,9 @@ export class MessageComponent implements OnInit {
    * @desc Listen to current User
    */
   listenMe() {
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
     this.notificationSubscription = this.db
       .list(`users/${this.authenticateService.currentUserValue.username}`)
       .stateChanges(['child_changed'])
@@ -243,12 +262,22 @@ export class MessageComponent implements OnInit {
         if (this.messageService.listUserStable) {
           const notification: any = data.payload.val();
           // create room name
-          const roomName = this.messageService.createRoomName(
-            this.authenticateService.currentUserValue.username,
-            notification.name
-          );
+          const roomName = notification.roomName;
+          // FIND other username in List User
+          let indexList = this.messageService.ListUsers.findIndex(({ name }) => name === notification.name);
+          // if user cannot be found , it might be the current user that sent it self
+          if (indexList === -1) {
+            // find other user
+            const username = roomName
+              .split('-')
+              .filter(e => e !== this.authenticateService.currentUserValue.username)[0];
+            indexList = this.messageService.ListUsers.findIndex(({ name }) => name === username);
 
-          const indexList = this.messageService.ListUsers.findIndex(({ name }) => name === notification.name);
+            // add 'You :' to message
+            if (indexList !== -1) {
+              notification.message = 'You : ' + notification.message;
+            }
+          }
           const changedList = this.messageService.ListUsers[indexList];
           if (changedList) {
             // change listUser properties
@@ -258,19 +287,24 @@ export class MessageComponent implements OnInit {
               timestamp: notification.timestamp,
               time: moment(notification.timestamp).format('MMM Do')
             };
-            changedList.unread = this.activeRoom !== roomName ? changedList.unread + 1 : 0;
+            changedList.unread =
+              this.activeRoom !== roomName ? (changedList.unread === undefined ? 1 : changedList.unread + 1) : 0;
             changedList.lastMessage = lastMessage;
             // if room inactive will move to top
             if (this.activeRoom !== roomName) {
               this.messageService.ListUsers = this.arraymove(this.messageService.ListUsers, indexList, 0);
             }
-            // update rooms
-            this.db.list(`chat/messages/${roomName}`).update('lastMessage', lastMessage);
           }
         }
       });
   }
 
+  // need to destroy notificationsubscription for different route
+  ngOnDestroy() {
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
+  }
   /**
    * @desc get message
    */
