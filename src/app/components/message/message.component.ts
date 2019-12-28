@@ -261,6 +261,7 @@ export class MessageComponent implements OnInit, OnDestroy {
       .subscribe((data: SnapshotAction<unknown>) => {
         if (this.messageService.listUserStable) {
           const notification: any = data.payload.val();
+          let isCurrentUserSentIt = false;
           // create room name
           const roomName = notification.roomName;
           // FIND other username in List User
@@ -276,6 +277,7 @@ export class MessageComponent implements OnInit, OnDestroy {
             // add 'You :' to message
             if (indexList !== -1) {
               notification.message = 'You : ' + notification.message;
+              isCurrentUserSentIt = true;
             }
           }
           const changedList = this.messageService.ListUsers[indexList];
@@ -287,12 +289,15 @@ export class MessageComponent implements OnInit, OnDestroy {
               timestamp: notification.timestamp,
               time: moment(notification.timestamp).format('MMM Do')
             };
-            changedList.unread =
-              this.activeRoom !== roomName ? (changedList.unread === undefined ? 1 : changedList.unread + 1) : 0;
             changedList.lastMessage = lastMessage;
-            // if room inactive will move to top
-            if (this.activeRoom !== roomName) {
-              this.messageService.ListUsers = this.arraymove(this.messageService.ListUsers, indexList, 0);
+            // if not current user send message
+            if (!isCurrentUserSentIt) {
+              changedList.unread =
+                this.activeRoom !== roomName ? (changedList.unread === undefined ? 1 : changedList.unread + 1) : 0;
+              // if room inactive will move to top
+              if (this.activeRoom !== roomName) {
+                this.messageService.ListUsers = this.arraymove(this.messageService.ListUsers, indexList, 0);
+              }
             }
           }
         }
